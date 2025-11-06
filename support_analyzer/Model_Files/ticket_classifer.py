@@ -6,14 +6,15 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from scipy.special import softmax
 import os
-# from support_analyzer.Model_Files import nltk_downloader
 
+# Base directory of current file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Add local nltk_data path
-nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
+
+# Correct nltk_data path (inside Model_Files)
+nltk_data_path = os.path.join(BASE_DIR, "nltk_data")
 nltk.data.path.append(nltk_data_path)
 
-# Download only if missing
+# Download stopwords only if missing
 try:
     stop_words = set(stopwords.words('english'))
 except LookupError:
@@ -27,6 +28,7 @@ le = joblib.load(os.path.join(BASE_DIR, "label_encoder.pkl"))
 
 # Initialize preprocessing components
 lemmatizer = WordNetLemmatizer()
+
 
 def preprocess_text(text):
     """
