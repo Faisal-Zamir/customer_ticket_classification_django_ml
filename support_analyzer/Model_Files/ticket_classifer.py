@@ -6,13 +6,19 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from scipy.special import softmax
 import os
+# from support_analyzer.Model_Files import nltk_downloader
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Add local nltk_data path
+nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
+nltk.data.path.append(nltk_data_path)
 
-# Ensure required NLTK data is downloaded
-nltk.download('stopwords')
-nltk.download('wordnet')
-
+# Download only if missing
+try:
+    stop_words = set(stopwords.words('english'))
+except LookupError:
+    nltk.download('stopwords', download_dir=nltk_data_path)
+    stop_words = set(stopwords.words('english'))
 
 # Load model and TF-IDF vectorizer
 model = joblib.load(os.path.join(BASE_DIR, "customer_ticket_classification_model.pkl"))
@@ -20,7 +26,6 @@ tfidf = joblib.load(os.path.join(BASE_DIR, "tfidf_vectorizer.pkl"))
 le = joblib.load(os.path.join(BASE_DIR, "label_encoder.pkl"))
 
 # Initialize preprocessing components
-stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
 def preprocess_text(text):

@@ -1,0 +1,1 @@
+web: gunicorn ticket_classifier.wsgi:application --bind 0.0.0.0:$PORT
