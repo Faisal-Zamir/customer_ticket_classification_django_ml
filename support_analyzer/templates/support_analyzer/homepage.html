@@ -167,7 +167,10 @@
             <div class="col-md-6 input-section">
                 <h3 class="mb-4">Submit Email Ticket</h3>
                <form id="emailForm" method="POST">
+
     {% csrf_token %}
+                    <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+
     <div class="row mb-3">
         <div class="col-md-6">
             <label for="name" class="form-label">Name</label>
@@ -297,15 +300,23 @@ document.addEventListener('DOMContentLoaded', function() {
         classifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Classifying...';
 
         // Prepare data with correct field name expected by Django
-        const formData = new FormData();
-        formData.append('ticket_text', message);  // Must match Django field
-        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-
+        // const formData = new FormData();
+        // formData.append('ticket_text', message);  // Must match Django field
+        // formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        const csrfToken = document.getElementById('csrfToken').value;
+        //const ticketText = document.getElementById('ticketText').value.trim();
         // Send POST request to Django
         fetch("{% url 'homepage' %}", {
-            method: 'POST',
-            body: formData
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: new URLSearchParams({ "ticket_text": message })
         })
+
+
         .then(response => response.json())
         .then(data => {
             if (data.success) {
